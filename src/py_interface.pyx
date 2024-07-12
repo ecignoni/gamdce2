@@ -43,6 +43,7 @@ def reweight_1d(
         maximum value of the free energy grid
     beta: float
         thermodynamic beta, 1. / kBT
+        NOTE: beta must have the same units as the bias
 
     Returns
     -------
@@ -112,6 +113,7 @@ def reweight_2d(
         maximum value of the free energy grid for the second cv
     beta: float
         thermodynamic beta, 1. / kBT
+        NOTE: beta must have the same units as the bias
 
     Returns
     -------
