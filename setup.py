@@ -8,7 +8,6 @@ def fortran_compiler(statement):
     system(statement)
 
 # compile the fortran modules without linking
-# compile fortran modules
 fortran_compiler('cd src ; gfortran mod_types.f90 -c -o mod_types.o -O3 -fPIC')
 fortran_compiler('cd src ; gfortran mod_gamdce2.f90 -c -o mod_gamdce2.o -O3 -fPIC')
 
@@ -30,8 +29,6 @@ ext_modules = [(
     )
 )]
 
-# for e in ext_modules:
-#     e.cython_directives = {'language_level': "3"}
 
 packages = [
     "gamdce2",
@@ -48,6 +45,4 @@ setup(
     long_description=open("README.md").read(),
     setup_required=["numpy", "cython"],
     install_required=["numpy", "cython", "pandas"],
-    #cmdclass = {'build_ext': build_ext},
-    #include_dirs = [get_include()],
 )
