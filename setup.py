@@ -47,7 +47,7 @@ setup(
     description="Fast reweighting of GaMD simulations with 2nd order Cumulant Expansion",
     long_description=open("README.md").read(),
     setup_required=["numpy", "cython"],
-    install_required=["numpy", "cython"],
+    install_required=["numpy", "cython", "pandas"],
     #cmdclass = {'build_ext': build_ext},
     #include_dirs = [get_include()],
 )
