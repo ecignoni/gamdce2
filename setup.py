@@ -1,10 +1,7 @@
-from setuptools import setup, Extension
-# from numpy.distutils.core import setup
-# from numpy.distutils.extension import Extension
-from Cython.Distutils import build_ext
-# This line only needed if building with NumPy in Cython file.
-from numpy import get_include
 from os import system
+import numpy as np
+from setuptools import setup, Extension
+from Cython.Build import cythonize
 
 def fortran_compiler(statement):
     print(statement)
@@ -18,29 +15,39 @@ fortran_compiler('cd src ; gfortran mod_gamdce2.f90 -c -o mod_gamdce2.o -O3 -fPI
 # compile fortran shared modules
 fortran_compiler('cd src; gfortran mod_c_interface.f90 -c -o mod_c_interface.o -O3 -fPIC')
 
-# editable components
-module_name = "gamdce2"
-source_file = "src/py_interface.pyx"
-compiled_modules = ['src/mod_gamdce2.o', 'src/mod_types.o', 'src/mod_c_interface.o']
-
 # setup
-ext_modules = [Extension(# module name:
-                         module_name,
-                         # source file:
-                         [source_file],
-                         libraries=["gfortran"],
-                         # other compile args for gcc
-                         extra_compile_args=['-fPIC', '-O3'],
-                         # other files to link to
-                         extra_link_args=compiled_modules)]
+ext_modules = [(
+    Extension(
+        "gamdce2.py_interface",
+        ["src/py_interface.pyx"],
+        libraries=["gfortran"],
+        # other compile args for gcc
+        extra_compile_args=["-O3", "-fPIC"],
+        extra_f90_compile_args=['-fPIC', '-O3'],
+        include_dirs=[np.get_include()],
+        # other files to link to
+        extra_link_args=['src/mod_gamdce2.o', 'src/mod_types.o', 'src/mod_c_interface.o'],
+    )
+)]
 
-for e in ext_modules:
-    e.cython_directives = {'language_level': "3"} #all are Python-3
+# for e in ext_modules:
+#     e.cython_directives = {'language_level': "3"}
 
-setup(name = module_name,
-      cmdclass = {'build_ext': build_ext},
-      # Needed if building with NumPy.
-      # This includes the NumPy headers when compiling.
-      include_dirs = [get_include()],
-      ext_modules = ext_modules)
+packages = [
+    "gamdce2",
+]
 
+setup(
+    name="gamdce2",
+    version="0.1.0",
+    author="Edoardo Cignoni",
+    author_email="edoardo.cignoni96@gmail.com",
+    packages=packages,
+    ext_modules = cythonize(ext_modules, compiler_directives={"language_level": "3"}),
+    description="Fast reweighting of GaMD simulations with 2nd order Cumulant Expansion",
+    long_description=open("README.md").read(),
+    setup_required=["numpy", "cython"],
+    install_required=["numpy", "cython"],
+    #cmdclass = {'build_ext': build_ext},
+    #include_dirs = [get_include()],
+)
